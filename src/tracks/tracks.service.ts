@@ -54,7 +54,7 @@ export class TracksService extends BaseService<Track> {
     this.items.delete(id);
   }
 
-  public removeArtistReference(artistId: string): void {
+  public removeArtistReference(artistId: string) {
     for (const track of this.items.values()) {
       if (track.artistId === artistId) {
         track.artistId = null;
@@ -62,7 +62,7 @@ export class TracksService extends BaseService<Track> {
     }
   }
 
-  public removeAlbumReference(albumId: string): void {
+  public removeAlbumReference(albumId: string) {
     for (const track of this.items.values()) {
       if (track.albumId === albumId) {
         track.albumId = null;
