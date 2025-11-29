@@ -47,15 +47,14 @@ export class TracksController {
       throw new BadRequestException(ERROR_MESSAGE.INVALID_UUID);
     }
 
-    try {
-      const track = this.tracksService.getById(id);
-      return track;
-    } catch (error) {
-      if (error.message === ERROR_MESSAGE.NOT_FOUND)
-        throw new NotFoundException(
-          `Track with provided id ${ERROR_MESSAGE.DOES_NOT_EXIST}`,
-        );
-    }
+    const track = this.tracksService.getById(id);
+
+    if (!track)
+      throw new NotFoundException(
+        `Track with provided id ${ERROR_MESSAGE.DOES_NOT_EXIST}`,
+      );
+
+    return track;
   }
 
   /**
@@ -81,7 +80,7 @@ export class TracksController {
    * @throws {NotFoundException}  if record with id === trackId doesn't exist
    */
 
-  @Put()
+  @Put(':id')
   update(@Param('id') id: string, @Body() updateTrackDto: UpdateTrackDto) {
     if (!this.tracksService.validateUUID(id)) {
       throw new BadRequestException(ERROR_MESSAGE.INVALID_UUID);
@@ -108,7 +107,7 @@ export class TracksController {
    * @throws {NotFoundException}  if record with id === trackId doesn't exist
    */
 
-  @Delete()
+  @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   delete(id: string) {
     if (!this.tracksService.validateUUID(id)) {
@@ -116,8 +115,7 @@ export class TracksController {
     }
 
     try {
-      const track = this.tracksService.delete(id);
-      return track;
+      this.tracksService.delete(id);
     } catch (error) {
       if (error.message === ERROR_MESSAGE.NOT_FOUND)
         throw new NotFoundException(
