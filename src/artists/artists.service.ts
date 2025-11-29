@@ -14,8 +14,7 @@ export class ArtistsService extends BaseService<Artist> {
     const id = this.generateId();
     const artist: Artist = {
       id,
-      name: createArtistDto.name,
-      grammy: createArtistDto.grammy,
+      ...createArtistDto,
     };
 
     this.items.set(id, artist);
