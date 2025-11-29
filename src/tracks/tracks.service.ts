@@ -1,12 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { BaseService } from 'src/common/base.service';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { ERROR_MESSAGE } from 'src/constants';
+import { FavoritesService } from 'src/favorites/favorites.service';
 
 @Injectable()
 export class TracksService extends BaseService<Track> {
-  constructor() {
+  constructor(
+    @Inject(forwardRef(() => FavoritesService))
+    private readonly favoritesService: FavoritesService,
+  ) {
     super();
   }
 
@@ -45,8 +49,23 @@ export class TracksService extends BaseService<Track> {
 
     if (!track) throw new Error(ERROR_MESSAGE.NOT_FOUND);
 
+    this.favoritesService.removeFavoriteItem({ id, category: 'tracks' });
     this.items.delete(id);
+  }
 
-    //TODO: удалить из favorites
+  public removeArtistReference(artistId: string): void {
+    for (const track of this.items.values()) {
+      if (track.artistId === artistId) {
+        track.artistId = null;
+      }
+    }
+  }
+
+  public removeAlbumReference(albumId: string): void {
+    for (const track of this.items.values()) {
+      if (track.albumId === albumId) {
+        track.albumId = null;
+      }
+    }
   }
 }

@@ -1,12 +1,25 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { ERROR_MESSAGE } from 'src/constants';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { BaseService } from '../common/base.service';
+import { TracksService } from 'src/tracks/tracks.service';
+import { FavoritesService } from 'src/favorites/favorites.service';
 
 @Injectable()
 export class AlbumsService extends BaseService<Album> {
-  constructor() {
+  constructor(
+    @Inject(forwardRef(() => TracksService))
+    private readonly tracksService: TracksService,
+
+    @Inject(forwardRef(() => FavoritesService))
+    private readonly favoritesService: FavoritesService,
+  ) {
     super();
   }
 
@@ -47,6 +60,16 @@ export class AlbumsService extends BaseService<Album> {
 
     if (!album) throw new Error(ERROR_MESSAGE.NOT_FOUND);
 
+    this.favoritesService.removeFavoriteItem({ id, category: 'albums' });
+    this.tracksService.removeAlbumReference(id);
     this.items.delete(id);
+  }
+
+  public removeArtistReference(artistId: string) {
+    for (const album of this.items.values()) {
+      if (album.artistId === artistId) {
+        album.artistId = null;
+      }
+    }
   }
 }
