@@ -4,12 +4,13 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { FavoritesService } from 'src/favorites/favorites.service';
+import { TracksService } from 'src/tracks/tracks.service';
 import { ERROR_MESSAGE } from 'src/constants';
+import { BaseService } from 'src/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
-import { BaseService } from '../common/base.service';
-import { TracksService } from 'src/tracks/tracks.service';
-import { FavoritesService } from 'src/favorites/favorites.service';
+import { Album } from './entities/album.entity';
 
 @Injectable()
 export class AlbumsService extends BaseService<Album> {

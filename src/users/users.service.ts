@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { BaseService } from 'src/common/base.service';
+import { BaseService } from 'src/common';
+import { USER_ERROR_MESSAGE } from 'src/constants';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { User } from './entities/user.entity';
-import { USER_ERROR_MESSAGE } from 'src/constants';
 
 @Injectable()
 export class UsersService extends BaseService<User> {
@@ -59,6 +59,7 @@ export class UsersService extends BaseService<User> {
   }
 
   private excludeUserPassword(user: User) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...restData } = user;
 
     return restData;

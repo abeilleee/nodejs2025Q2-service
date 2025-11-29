@@ -1,4 +1,4 @@
-interface Favorites {
+export interface Favorites {
   /**
    *  favorite artists ids
    */

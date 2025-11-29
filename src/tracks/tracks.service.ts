@@ -1,9 +1,10 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { BaseService } from 'src/common/base.service';
-import { CreateTrackDto } from './dto/create-track.dto';
-import { UpdateTrackDto } from './dto/update-track.dto';
+import { BaseService } from 'src/common';
 import { ERROR_MESSAGE } from 'src/constants';
 import { FavoritesService } from 'src/favorites/favorites.service';
+import { CreateTrackDto } from './dto/create-track.dto';
+import { UpdateTrackDto } from './dto/update-track.dto';
+import { Track } from './entities/trask.entity';
 
 @Injectable()
 export class TracksService extends BaseService<Track> {

@@ -3,6 +3,7 @@ import { AlbumsService } from 'src/albums/albums.service';
 import { ArtistsService } from 'src/artists/artists.service';
 import { ERROR_MESSAGE } from 'src/constants';
 import { TracksService } from 'src/tracks/tracks.service';
+import { Favorites } from './entities/favorite.entity';
 
 interface RemoveFavoriteOptions {
   id: string;
