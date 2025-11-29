@@ -10,6 +10,10 @@ export class AlbumsService extends BaseService<Album> {
     super();
   }
 
+  public getAlbumsMap() {
+    return this.items;
+  }
+
   public create(createAlbumDto: CreateAlbumDto) {
     const id = this.generateId();
     const album: Album = {

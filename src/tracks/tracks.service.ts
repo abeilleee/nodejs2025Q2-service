@@ -10,6 +10,10 @@ export class TracksService extends BaseService<Track> {
     super();
   }
 
+  public getTracksMap() {
+    return this.items;
+  }
+
   public create(createTrackDto: CreateTrackDto) {
     const id = this.generateId();
     const track: Track = {

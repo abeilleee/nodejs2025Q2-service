@@ -10,6 +10,10 @@ export class ArtistsService extends BaseService<Artist> {
     super();
   }
 
+  public getArtistsMap() {
+    return this.items;
+  }
+
   public create(createArtistDto: CreateArtistDto) {
     const id = this.generateId();
     const artist: Artist = {
