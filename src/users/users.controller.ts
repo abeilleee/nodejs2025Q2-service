@@ -23,7 +23,7 @@ import { UsersService } from './users.service';
 import { UsersResponseDto } from './dto/user-response.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
-import { USER_ERROR_MESSAGE } from 'src/constants';
+import { ERROR_MESSAGE, USER_ERROR_MESSAGE } from 'src/constants';
 
 @ApiTags('User')
 @Controller('user')
@@ -79,7 +79,7 @@ export class UsersController {
   })
   getUserById(id: string) {
     if (!this.usersService.validateUUID(id)) {
-      throw new BadRequestException(USER_ERROR_MESSAGE.INVALID_UUID);
+      throw new BadRequestException(ERROR_MESSAGE.INVALID_UUID);
     }
 
     const user = this.usersService.getById(id);
@@ -160,7 +160,7 @@ export class UsersController {
     @Body() updatePasswordDto: UpdatePasswordDto,
   ) {
     if (!this.usersService.validateUUID(id)) {
-      throw new BadRequestException(USER_ERROR_MESSAGE.INVALID_UUID);
+      throw new BadRequestException(ERROR_MESSAGE.INVALID_UUID);
     }
 
     try {
@@ -206,7 +206,7 @@ export class UsersController {
   })
   deleteUser(@Param('id') id: string) {
     if (!this.usersService.validateUUID(id)) {
-      throw new BadRequestException(USER_ERROR_MESSAGE.INVALID_UUID);
+      throw new BadRequestException(ERROR_MESSAGE.INVALID_UUID);
     }
 
     try {
