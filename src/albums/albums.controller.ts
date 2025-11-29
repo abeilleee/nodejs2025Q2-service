@@ -16,7 +16,7 @@ import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { ERROR_MESSAGE } from 'src/constants';
 
-@Controller('albums')
+@Controller('album')
 export class AlbumsController {
   constructor(private readonly albumsService: AlbumsService) {}
 
@@ -24,7 +24,7 @@ export class AlbumsController {
    * Get all albums
    *
    * @method GET
-   * @endpoint /albums
+   * @endpoint /album
    */
 
   @Get()
@@ -82,7 +82,7 @@ export class AlbumsController {
    */
 
   @Put(':id')
-  update(id: string, updateAlbumDto: UpdateAlbumDto) {
+  update(@Param('id') id: string, @Body() updateAlbumDto: UpdateAlbumDto) {
     if (!this.albumsService.validateUUID(id)) {
       throw new BadRequestException(ERROR_MESSAGE.INVALID_UUID);
     }
@@ -122,6 +122,8 @@ export class AlbumsController {
         throw new NotFoundException(
           `Album with provided id ${ERROR_MESSAGE.DOES_NOT_EXIST}`,
         );
+
+      throw new BadRequestException(error.message);
     }
   }
 }

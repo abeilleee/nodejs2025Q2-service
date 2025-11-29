@@ -77,7 +77,7 @@ export class UsersController {
     status: HttpStatus.NOT_FOUND,
     description: 'User with specified ID was not found',
   })
-  getUserById(id: string) {
+  getUserById(@Param('id') id: string) {
     if (!this.usersService.validateUUID(id)) {
       throw new BadRequestException(ERROR_MESSAGE.INVALID_UUID);
     }

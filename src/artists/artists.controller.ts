@@ -15,8 +15,9 @@ import { ArtistsService } from './artists.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { ERROR_MESSAGE } from 'src/constants';
 import { UpdateArtistInfoDto } from './dto/update-artist-info.dto';
+import { Artist } from './entities/artist.entity';
 
-@Controller('artists')
+@Controller('artist')
 export class ArtistsController {
   constructor(private readonly artistsService: ArtistsService) {}
 
@@ -42,7 +43,7 @@ export class ArtistsController {
    */
 
   @Get(':id')
-  getSingleArtist(id: string) {
+  getSingleArtist(@Param('id') id: string) {
     if (!this.artistsService.validateUUID(id)) {
       throw new BadRequestException(ERROR_MESSAGE.INVALID_UUID);
     }
@@ -113,7 +114,7 @@ export class ArtistsController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(id: string): void {
+  remove(@Param('id') id: string): void {
     if (!this.artistsService.validateUUID(id)) {
       throw new BadRequestException(ERROR_MESSAGE.INVALID_UUID);
     }

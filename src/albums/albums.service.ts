@@ -44,7 +44,7 @@ export class AlbumsService extends BaseService<Album> {
     const album = this.items.get(id);
 
     if (!album) {
-      throw new NotFoundException(ERROR_MESSAGE.NOT_FOUND);
+      throw new Error(ERROR_MESSAGE.NOT_FOUND);
     }
 
     album.name = updateAlbumDto.name;

@@ -41,8 +41,8 @@ export class TracksController {
    * @throws {NotFoundException} if record with id === trackId doesn't exist
    */
 
-  @Get()
-  getSingleTrack(id: string) {
+  @Get(':id')
+  getSingleTrack(@Param('id') id: string) {
     if (!this.tracksService.validateUUID(id)) {
       throw new BadRequestException(ERROR_MESSAGE.INVALID_UUID);
     }
@@ -109,7 +109,7 @@ export class TracksController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  delete(id: string) {
+  delete(@Param('id') id: string) {
     if (!this.tracksService.validateUUID(id)) {
       throw new BadRequestException(ERROR_MESSAGE.INVALID_UUID);
     }
