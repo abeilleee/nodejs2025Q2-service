@@ -9,17 +9,6 @@ import { USER_ERROR_MESSAGE } from 'src/constants';
 export class UsersService extends BaseService<User> {
   constructor() {
     super();
-
-    // TODO: удалить (для теста)
-    const testUserId = this.generateId();
-    this.items.set(testUserId, {
-      id: testUserId,
-      login: 'admin',
-      password: 'admin123',
-      version: 1,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-    });
   }
 
   public create(createUserDto: CreateUserDto) {
