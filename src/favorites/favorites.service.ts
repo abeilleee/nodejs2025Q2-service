@@ -30,15 +30,17 @@ export class FavoritesService {
   ) {}
 
   public getAll() {
-    const artists = Object.values(this.favorites.artists).map((id) =>
-      this.artistsService.getArtistsMap().get(id),
-    );
-    const albums = Object.values(this.favorites.albums).map((id) =>
-      this.albumsService.getAlbumsMap().get(id),
-    );
-    const tracks = Object.values(this.favorites.tracks).map((id) =>
-      this.tracksService.getTracksMap().get(id),
-    );
+    const artists = Array.from(this.favorites.artists)
+      .map((id: string) => this.artistsService.getArtistsMap().get(id))
+      .filter(Boolean);
+
+    const albums = Array.from(this.favorites.albums)
+      .map((id: string) => this.albumsService.getAlbumsMap().get(id))
+      .filter(Boolean);
+
+    const tracks = Array.from(this.favorites.tracks)
+      .map((id: string) => this.tracksService.getTracksMap().get(id))
+      .filter(Boolean);
 
     return { artists, albums, tracks };
   }
