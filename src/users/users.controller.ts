@@ -45,7 +45,7 @@ export class UsersController {
     type: UsersResponseDto,
   })
   getAll() {
-    return this.usersService.getAll();
+    return this.usersService.getAllUsers();
   }
 
   /**
