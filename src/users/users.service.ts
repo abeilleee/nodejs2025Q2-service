@@ -58,7 +58,7 @@ export class UsersService extends BaseService<User> {
     this.items.delete(id);
   }
 
-  private excludeUserPassword(user: User) {
+  public excludeUserPassword(user: User) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...restData } = user;
 

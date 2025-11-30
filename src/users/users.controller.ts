@@ -82,7 +82,9 @@ export class UsersController {
 
     if (!user) throw new NotFoundException(USER_ERROR_MESSAGE.DOES_NOT_EXIST);
 
-    return user;
+    const userData = this.usersService.excludeUserPassword(user);
+
+    return userData;
   }
 
   /**
