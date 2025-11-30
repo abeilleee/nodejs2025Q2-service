@@ -1,33 +1,59 @@
-# Home Library Service
+# 🎵 Home Library Service
 
-## Prerequisites
+A comprehensive REST API for managing a personal music library with artists, albums, tracks, and favorites.
 
-- Git - [Download & Install Git](https://git-scm.com/downloads).
-- Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
+## 🚀 Technologies & Stack
 
-## Downloading
+![NESTJS](https://img.shields.io/badge/nestjs-E0234E?style=for-the-badge&logo=nestjs&logoColor=white)
+![](https://img.shields.io/badge/swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black)
+![](https://img.shields.io/badge/typescript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![](https://img.shields.io/badge/node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![](https://img.shields.io/badge/class--validator-000000?style=for-the-badge&logo=&logoColor=white)
+![](https://img.shields.io/badge/class--transformer-000000?style=for-the-badge&logo=&logoColor=white)
+![](https://img.shields.io/badge/jest-C21325?style=for-the-badge&logo=jest&logoColor=white)
+![](https://img.shields.io/badge/eslint-4B32C3?style=for-the-badge&logo=eslint&logoColor=white)
+![](https://img.shields.io/badge/prettier-F7B93E?style=for-the-badge&logo=prettier&logoColor=black)
+![](https://img.shields.io/badge/yaml-CB171E?style=for-the-badge&logo=yaml&logoColor=white)
+
+## ⚡ Running application
 
 ```
-git clone {repository URL}
+git clone https://github.com/abeilleee/nodejs2025Q2-service.git
 ```
-
-## Installing NPM modules
 
 ```
 npm install
 ```
 
-## Running application
+```
+# Development mode
+npm run start:dev
+```
 
 ```
+# Start in production mode
 npm start
 ```
 
-After starting the app on port (4000 as default) you can open
-in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
-For more information about OpenAPI/Swagger please visit https://swagger.io/.
+## 📚 API Documentation
 
-## Testing
+After starting the application, you can explore the interactive API documentation with Open API:
+
+```
+http://localhost:4000/api
+```
+
+Features:
+
+📖 Interactive API documentation
+
+🔍 Test endpoints directly from the browser
+
+📝 Request/Response schemas
+
+🎯 Try-it-out functionality
+
+## 🧪 Testing
 
 After application running open new terminal and enter:
 
@@ -55,7 +81,7 @@ To run only specific test suite with authorization
 npm run test:auth -- <path to suite>
 ```
 
-### Auto-fix and format
+## 🔧 Auto-fix and format
 
 ```
 npm run lint
@@ -64,9 +90,3 @@ npm run lint
 ```
 npm run format
 ```
-
-### Debugging in VSCode
-
-Press <kbd>F5</kbd> to debug.
-
-For more information, visit: https://code.visualstudio.com/docs/editor/debugging
