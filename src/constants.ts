@@ -1,7 +1,7 @@
 export const enum ERROR_MESSAGE {
   NOT_FOUND = 'Not found',
   INVALID_UUID = 'Invalid ID',
-  DOES_NOT_EXIST = 'does not exists',
+  DOES_NOT_EXIST = 'does not exist',
 }
 
 export const enum USER_ERROR_MESSAGE {

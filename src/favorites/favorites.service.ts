@@ -54,10 +54,6 @@ export class FavoritesService {
   }
 
   public addArtist(id: string) {
-    if (!this.validateUUID(id)) {
-      throw new Error(ERROR_MESSAGE.INVALID_UUID);
-    }
-
     if (!this.artistsService.getById(id)) {
       throw new Error(ERROR_MESSAGE.NOT_FOUND);
     }
@@ -65,7 +61,7 @@ export class FavoritesService {
     this.favorites.artists.add(id);
   }
 
-  public addAlbum(id: string): void {
+  public addAlbum(id: string) {
     if (!this.albumsService.getById(id)) {
       throw new Error(ERROR_MESSAGE.NOT_FOUND);
     }
@@ -84,11 +80,5 @@ export class FavoritesService {
       case 'artists':
         return this.favorites.artists.delete(id);
     }
-  }
-
-  public validateUUID(id: string): boolean {
-    const uuidRegex =
-      /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-    return uuidRegex.test(id);
   }
 }

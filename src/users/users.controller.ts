@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -9,6 +8,7 @@ import {
   HttpStatus,
   NotFoundException,
   Param,
+  ParseUUIDPipe,
   Post,
   Put,
 } from '@nestjs/common';
@@ -77,11 +77,7 @@ export class UsersController {
     status: HttpStatus.NOT_FOUND,
     description: 'User with specified ID was not found',
   })
-  getUserById(@Param('id') id: string) {
-    if (!this.usersService.validateUUID(id)) {
-      throw new BadRequestException(ERROR_MESSAGE.INVALID_UUID);
-    }
-
+  getUserById(@Param('id', ParseUUIDPipe) id: string) {
     const user = this.usersService.getById(id);
 
     if (!user) throw new NotFoundException(USER_ERROR_MESSAGE.DOES_NOT_EXIST);
@@ -156,13 +152,9 @@ export class UsersController {
     description: 'Old password is incorrect',
   })
   updatePassword(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() updatePasswordDto: UpdatePasswordDto,
   ) {
-    if (!this.usersService.validateUUID(id)) {
-      throw new BadRequestException(ERROR_MESSAGE.INVALID_UUID);
-    }
-
     try {
       return this.usersService.updatePassword(id, updatePasswordDto);
     } catch (error) {
@@ -204,11 +196,7 @@ export class UsersController {
     status: HttpStatus.NOT_FOUND,
     description: 'User with specified ID was not found',
   })
-  deleteUser(@Param('id') id: string) {
-    if (!this.usersService.validateUUID(id)) {
-      throw new BadRequestException(ERROR_MESSAGE.INVALID_UUID);
-    }
-
+  deleteUser(@Param('id', ParseUUIDPipe) id: string) {
     try {
       this.usersService.deleteUser(id);
     } catch (error) {

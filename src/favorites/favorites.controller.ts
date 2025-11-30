@@ -6,9 +6,9 @@ import {
   Param,
   HttpCode,
   HttpStatus,
-  BadRequestException,
   NotFoundException,
   UnprocessableEntityException,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { FavoritesService } from './favorites.service';
 import { ERROR_MESSAGE } from 'src/constants';
@@ -39,11 +39,7 @@ export class FavoritesController {
    */
   @Post('track/:id')
   @HttpCode(HttpStatus.CREATED)
-  addTrack(@Param('id') id: string) {
-    if (!this.favoritesService.validateUUID(id)) {
-      throw new BadRequestException(ERROR_MESSAGE.INVALID_UUID);
-    }
-
+  addTrack(@Param('id', ParseUUIDPipe) id: string) {
     try {
       this.favoritesService.addTrack(id);
       return { message: 'Track added to favorites successfully' };
@@ -69,11 +65,7 @@ export class FavoritesController {
    */
   @Delete('track/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  removeTrack(@Param('id') id: string) {
-    if (!this.favoritesService.validateUUID(id)) {
-      throw new BadRequestException(ERROR_MESSAGE.INVALID_UUID);
-    }
-
+  removeTrack(@Param('id', ParseUUIDPipe) id: string) {
     const result = this.favoritesService.removeFavoriteItem({
       id,
       category: 'tracks',
@@ -96,11 +88,7 @@ export class FavoritesController {
    */
   @Post('album/:id')
   @HttpCode(HttpStatus.CREATED)
-  addAlbum(@Param('id') id: string) {
-    if (!this.favoritesService.validateUUID(id)) {
-      throw new BadRequestException(ERROR_MESSAGE.INVALID_UUID);
-    }
-
+  addAlbum(@Param('id', ParseUUIDPipe) id: string) {
     try {
       this.favoritesService.addAlbum(id);
       return { message: 'Album added to favorites successfully' };
@@ -126,11 +114,7 @@ export class FavoritesController {
    */
   @Delete('album/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  removeAlbum(@Param('id') id: string) {
-    if (!this.favoritesService.validateUUID(id)) {
-      throw new BadRequestException(ERROR_MESSAGE.INVALID_UUID);
-    }
-
+  removeAlbum(@Param('id', ParseUUIDPipe) id: string) {
     const result = this.favoritesService.removeFavoriteItem({
       id,
       category: 'albums',
@@ -153,11 +137,7 @@ export class FavoritesController {
    */
   @Post('artist/:id')
   @HttpCode(HttpStatus.CREATED)
-  addArtist(@Param('id') id: string) {
-    if (!this.favoritesService.validateUUID(id)) {
-      throw new BadRequestException(ERROR_MESSAGE.INVALID_UUID);
-    }
-
+  addArtist(@Param('id', ParseUUIDPipe) id: string) {
     try {
       this.favoritesService.addArtist(id);
       return { message: 'Artist added to favorites successfully' };
@@ -183,11 +163,7 @@ export class FavoritesController {
    */
   @Delete('artist/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  removeArtist(@Param('id') id: string) {
-    if (!this.favoritesService.validateUUID(id)) {
-      throw new BadRequestException(ERROR_MESSAGE.INVALID_UUID);
-    }
-
+  removeArtist(@Param('id', ParseUUIDPipe) id: string) {
     const result = this.favoritesService.removeFavoriteItem({
       id,
       category: 'artists',

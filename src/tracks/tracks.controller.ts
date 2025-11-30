@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -8,6 +7,7 @@ import {
   HttpStatus,
   NotFoundException,
   Param,
+  ParseUUIDPipe,
   Post,
   Put,
 } from '@nestjs/common';
@@ -42,11 +42,7 @@ export class TracksController {
    */
 
   @Get(':id')
-  getSingleTrack(@Param('id') id: string) {
-    if (!this.tracksService.validateUUID(id)) {
-      throw new BadRequestException(ERROR_MESSAGE.INVALID_UUID);
-    }
-
+  getSingleTrack(@Param('id', ParseUUIDPipe) id: string) {
     const track = this.tracksService.getById(id);
 
     if (!track)
@@ -81,11 +77,10 @@ export class TracksController {
    */
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateTrackDto: UpdateTrackDto) {
-    if (!this.tracksService.validateUUID(id)) {
-      throw new BadRequestException(ERROR_MESSAGE.INVALID_UUID);
-    }
-
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateTrackDto: UpdateTrackDto,
+  ) {
     try {
       const track = this.tracksService.update(id, updateTrackDto);
       return track;
@@ -109,11 +104,7 @@ export class TracksController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  delete(@Param('id') id: string) {
-    if (!this.tracksService.validateUUID(id)) {
-      throw new BadRequestException(ERROR_MESSAGE.INVALID_UUID);
-    }
-
+  delete(@Param('id', ParseUUIDPipe) id: string) {
     try {
       this.tracksService.delete(id);
     } catch (error) {

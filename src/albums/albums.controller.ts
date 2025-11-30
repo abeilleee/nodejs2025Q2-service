@@ -8,8 +8,8 @@ import {
   Param,
   HttpCode,
   HttpStatus,
-  BadRequestException,
   NotFoundException,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { AlbumsService } from './albums.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
@@ -42,11 +42,7 @@ export class AlbumsController {
    */
 
   @Get(':id')
-  getSingleAlbum(@Param('id') id: string) {
-    if (!this.albumsService.validateUUID(id)) {
-      throw new BadRequestException(ERROR_MESSAGE.INVALID_UUID);
-    }
-
+  getSingleAlbum(@Param('id', ParseUUIDPipe) id: string) {
     const album = this.albumsService.getById(id);
 
     if (!album) {
@@ -82,11 +78,10 @@ export class AlbumsController {
    */
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateAlbumDto: UpdateAlbumDto) {
-    if (!this.albumsService.validateUUID(id)) {
-      throw new BadRequestException(ERROR_MESSAGE.INVALID_UUID);
-    }
-
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateAlbumDto: UpdateAlbumDto,
+  ) {
     try {
       const album = this.albumsService.update(id, updateAlbumDto);
       return album;
@@ -110,11 +105,7 @@ export class AlbumsController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: string) {
-    if (!this.albumsService.validateUUID(id)) {
-      throw new BadRequestException(ERROR_MESSAGE.INVALID_UUID);
-    }
-
+  remove(@Param('id', ParseUUIDPipe) id: string) {
     try {
       this.albumsService.delete(id);
     } catch (error) {
@@ -123,7 +114,7 @@ export class AlbumsController {
           `Album with provided id ${ERROR_MESSAGE.DOES_NOT_EXIST}`,
         );
 
-      throw new BadRequestException(error.message);
+      throw error;
     }
   }
 }
