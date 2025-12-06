@@ -28,8 +28,8 @@ export class TracksController {
    */
 
   @Get()
-  getAll() {
-    return this.tracksService.getAll();
+  async getAll() {
+    return await this.tracksService.getAll();
   }
 
   /**
@@ -42,8 +42,8 @@ export class TracksController {
    */
 
   @Get(':id')
-  getSingleTrack(@Param('id', ParseUUIDPipe) id: string) {
-    const track = this.tracksService.getById(id);
+  async getSingleTrack(@Param('id', ParseUUIDPipe) id: string) {
+    const track = await this.tracksService.getById(id);
 
     if (!track)
       throw new NotFoundException(
@@ -63,8 +63,8 @@ export class TracksController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() createTrackDto: CreateTrackDto) {
-    return this.tracksService.create(createTrackDto);
+  async create(@Body() createTrackDto: CreateTrackDto) {
+    return await this.tracksService.create(createTrackDto);
   }
 
   /**
@@ -77,12 +77,12 @@ export class TracksController {
    */
 
   @Put(':id')
-  update(
+  async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateTrackDto: UpdateTrackDto,
   ) {
     try {
-      const track = this.tracksService.update(id, updateTrackDto);
+      const track = await this.tracksService.update(id, updateTrackDto);
       return track;
     } catch (error) {
       if (error.message === ERROR_MESSAGE.NOT_FOUND)
@@ -104,9 +104,9 @@ export class TracksController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  delete(@Param('id', ParseUUIDPipe) id: string) {
+  async delete(@Param('id', ParseUUIDPipe) id: string) {
     try {
-      this.tracksService.delete(id);
+      await this.tracksService.delete(id);
     } catch (error) {
       if (error.message === ERROR_MESSAGE.NOT_FOUND)
         throw new NotFoundException(
