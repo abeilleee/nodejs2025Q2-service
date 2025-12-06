@@ -15,7 +15,6 @@ import { ArtistsService } from './artists.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { ERROR_MESSAGE } from 'src/constants';
 import { UpdateArtistInfoDto } from './dto/update-artist-info.dto';
-import { Artist } from './entities/artist.entity';
 
 @Controller('artist')
 export class ArtistsController {
@@ -29,8 +28,8 @@ export class ArtistsController {
    */
 
   @Get()
-  getAll() {
-    return this.artistsService.getAll();
+  async getAll() {
+    return await this.artistsService.getAll();
   }
 
   /**
@@ -43,8 +42,8 @@ export class ArtistsController {
    */
 
   @Get(':id')
-  getSingleArtist(@Param('id', ParseUUIDPipe) id: string) {
-    const artist = this.artistsService.getById(id);
+  async getSingleArtist(@Param('id', ParseUUIDPipe) id: string) {
+    const artist = await this.artistsService.getById(id);
 
     if (!artist) {
       throw new NotFoundException(
@@ -65,8 +64,8 @@ export class ArtistsController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() createArtistDto: CreateArtistDto): Artist {
-    return this.artistsService.create(createArtistDto);
+  async create(@Body() createArtistDto: CreateArtistDto) {
+    return await this.artistsService.create(createArtistDto);
   }
 
   /**
@@ -79,12 +78,12 @@ export class ArtistsController {
    */
 
   @Put(':id')
-  update(
+  async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateArtistInfoDto: UpdateArtistInfoDto,
   ) {
     try {
-      const artist = this.artistsService.update(id, updateArtistInfoDto);
+      const artist = await this.artistsService.update(id, updateArtistInfoDto);
       return artist;
     } catch (error) {
       if (error.message === ERROR_MESSAGE.NOT_FOUND)
@@ -106,9 +105,9 @@ export class ArtistsController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id', ParseUUIDPipe) id: string): void {
+  async remove(@Param('id', ParseUUIDPipe) id: string) {
     try {
-      this.artistsService.delete(id);
+      await this.artistsService.delete(id);
     } catch (error) {
       if (error.message === ERROR_MESSAGE.NOT_FOUND)
         throw new NotFoundException(
