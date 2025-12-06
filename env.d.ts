@@ -1,7 +1,7 @@
 declare namespace NodeJS {
   interface ProcessEnv {
-    PORT: number;
-    CRYPT_SALT: number;
+    PORT: string;
+    CRYPT_SALT: string;
     JWT_SECRET_KEY: string;
     JWT_SECRET_REFRESH_KEY: string;
     TOKEN_EXPIRE_TIME: string;
