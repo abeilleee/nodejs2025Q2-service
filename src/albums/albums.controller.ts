@@ -28,8 +28,8 @@ export class AlbumsController {
    */
 
   @Get()
-  getAll() {
-    return this.albumsService.getAll();
+  async getAll() {
+    return await this.albumsService.getAll();
   }
 
   /**
@@ -42,8 +42,8 @@ export class AlbumsController {
    */
 
   @Get(':id')
-  getSingleAlbum(@Param('id', ParseUUIDPipe) id: string) {
-    const album = this.albumsService.getById(id);
+  async getSingleAlbum(@Param('id', ParseUUIDPipe) id: string) {
+    const album = await this.albumsService.getById(id);
 
     if (!album) {
       throw new NotFoundException(
@@ -64,8 +64,8 @@ export class AlbumsController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() createAlbumDto: CreateAlbumDto) {
-    return this.albumsService.create(createAlbumDto);
+  async create(@Body() createAlbumDto: CreateAlbumDto) {
+    return await this.albumsService.create(createAlbumDto);
   }
 
   /**
@@ -78,12 +78,12 @@ export class AlbumsController {
    */
 
   @Put(':id')
-  update(
+  async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateAlbumDto: UpdateAlbumDto,
   ) {
     try {
-      const album = this.albumsService.update(id, updateAlbumDto);
+      const album = await this.albumsService.update(id, updateAlbumDto);
       return album;
     } catch (error) {
       if (error.message === ERROR_MESSAGE.NOT_FOUND)
@@ -105,9 +105,9 @@ export class AlbumsController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id', ParseUUIDPipe) id: string) {
+  async remove(@Param('id', ParseUUIDPipe) id: string) {
     try {
-      this.albumsService.delete(id);
+      await this.albumsService.delete(id);
     } catch (error) {
       if (error.message === ERROR_MESSAGE.NOT_FOUND)
         throw new NotFoundException(
