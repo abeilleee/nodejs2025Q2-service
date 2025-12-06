@@ -25,8 +25,8 @@ export class FavoritesController {
    * @returns {FavoritesResponse} all favorite records split by entity type
    */
   @Get()
-  getAll() {
-    return this.favoritesService.getAll();
+  async getAll() {
+    return await this.favoritesService.getAll();
   }
 
   /**
@@ -39,9 +39,9 @@ export class FavoritesController {
    */
   @Post('track/:id')
   @HttpCode(HttpStatus.CREATED)
-  addTrack(@Param('id', ParseUUIDPipe) id: string) {
+  async addTrack(@Param('id', ParseUUIDPipe) id: string) {
     try {
-      this.favoritesService.addTrack(id);
+      await this.favoritesService.addTrack(id);
       return { message: 'Track added to favorites successfully' };
     } catch (error) {
       if (error.message === ERROR_MESSAGE.NOT_FOUND) {
@@ -65,8 +65,8 @@ export class FavoritesController {
    */
   @Delete('track/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  removeTrack(@Param('id', ParseUUIDPipe) id: string) {
-    const result = this.favoritesService.removeFavoriteItem({
+  async removeTrack(@Param('id', ParseUUIDPipe) id: string) {
+    const result = await this.favoritesService.removeFavoriteItem({
       id,
       category: 'tracks',
     });
@@ -88,9 +88,9 @@ export class FavoritesController {
    */
   @Post('album/:id')
   @HttpCode(HttpStatus.CREATED)
-  addAlbum(@Param('id', ParseUUIDPipe) id: string) {
+  async addAlbum(@Param('id', ParseUUIDPipe) id: string) {
     try {
-      this.favoritesService.addAlbum(id);
+      await this.favoritesService.addAlbum(id);
       return { message: 'Album added to favorites successfully' };
     } catch (error) {
       if (error.message === ERROR_MESSAGE.NOT_FOUND) {
@@ -114,8 +114,8 @@ export class FavoritesController {
    */
   @Delete('album/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  removeAlbum(@Param('id', ParseUUIDPipe) id: string) {
-    const result = this.favoritesService.removeFavoriteItem({
+  async removeAlbum(@Param('id', ParseUUIDPipe) id: string) {
+    const result = await this.favoritesService.removeFavoriteItem({
       id,
       category: 'albums',
     });
@@ -137,9 +137,9 @@ export class FavoritesController {
    */
   @Post('artist/:id')
   @HttpCode(HttpStatus.CREATED)
-  addArtist(@Param('id', ParseUUIDPipe) id: string) {
+  async addArtist(@Param('id', ParseUUIDPipe) id: string) {
     try {
-      this.favoritesService.addArtist(id);
+      await this.favoritesService.addArtist(id);
       return { message: 'Artist added to favorites successfully' };
     } catch (error) {
       if (error.message === ERROR_MESSAGE.NOT_FOUND) {
@@ -163,8 +163,8 @@ export class FavoritesController {
    */
   @Delete('artist/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  removeArtist(@Param('id', ParseUUIDPipe) id: string) {
-    const result = this.favoritesService.removeFavoriteItem({
+  async removeArtist(@Param('id', ParseUUIDPipe) id: string) {
+    const result = await this.favoritesService.removeFavoriteItem({
       id,
       category: 'artists',
     });

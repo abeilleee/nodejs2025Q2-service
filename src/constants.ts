@@ -10,3 +10,8 @@ export const enum USER_ERROR_MESSAGE {
   OLD_PASSWORD_INCORRECT = 'Old password is incorrect',
   USER_ALREADY_EXISTS = 'User with provided ID is already exists',
 }
+
+export const enum PRISMA_ERROR {
+  CONSTRAINT_ERROR = 'P2002',
+  QUERY_ERROR = 'P2025',
+}
