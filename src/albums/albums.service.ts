@@ -1,5 +1,5 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/services';
+import { PrismaService } from 'src/shared';
 import { FavoritesService } from 'src/favorites/favorites.service';
 import { TracksService } from 'src/tracks/tracks.service';
 import { ERROR_MESSAGE } from 'src/constants';
