@@ -1,0 +1,14 @@
+**/node_modules/
+**/dist
+**/*.md
+**/coverage
+**/build
+**/test
+**/*.log
+**/.vscode
+.git
+.env
+.gitignore
+npm-debug.log
+!README.md
+
