@@ -9,6 +9,11 @@
 .git
 .env
 .gitignore
+.dockerignore
 npm-debug.log
-!README.md
+tsconfig.json
+nest-cli.json
+.eslintrc.js
+.prettierrc
+
 
