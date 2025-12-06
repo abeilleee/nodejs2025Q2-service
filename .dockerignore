@@ -11,7 +11,6 @@
 .gitignore
 .dockerignore
 npm-debug.log
-tsconfig.json
 nest-cli.json
 .eslintrc.js
 .prettierrc
