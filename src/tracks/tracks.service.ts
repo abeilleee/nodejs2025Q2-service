@@ -1,7 +1,7 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/shared';
-import { ERROR_MESSAGE } from 'src/constants';
-import { FavoritesService } from 'src/favorites/favorites.service';
+import { PrismaService } from '../shared/prisma.service';
+import { ERROR_MESSAGE } from '../constants';
+import { FavoritesService } from '../favorites/favorites.service';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 

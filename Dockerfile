@@ -5,9 +5,10 @@ WORKDIR /app
 RUN apk add --no-cache openssl
 
 COPY package*.json ./
+COPY ./tsconfig.json ./
 COPY prisma/schema.prisma ./prisma/
 
-RUN npm ci --include=dev
+RUN npm ci && npm cache clean --force
 
 RUN npx prisma generate
 
@@ -22,12 +23,15 @@ WORKDIR /app
 RUN apk add --no-cache openssl
 
 COPY package*.json ./
+COPY ./tsconfig.json ./
 
 RUN npm ci --omit=dev && npm cache clean --force
 
+COPY ./src ./src
+COPY ./doc ./doc
+COPY ./prisma ./prisma
+
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/doc ./doc
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 
-CMD ["sh", "-c", "npx prisma migrate deploy && node dist/main.js"]
+CMD ["sh", "-c", "npm run start:poll"]

@@ -11,7 +11,7 @@ import {
   ParseUUIDPipe,
 } from '@nestjs/common';
 import { FavoritesService } from './favorites.service';
-import { ERROR_MESSAGE } from 'src/constants';
+import { ERROR_MESSAGE } from '../constants';
 
 @Controller('favs')
 export class FavoritesController {

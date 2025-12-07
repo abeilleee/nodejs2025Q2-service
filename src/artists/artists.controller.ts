@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { ArtistsService } from './artists.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
-import { ERROR_MESSAGE } from 'src/constants';
+import { ERROR_MESSAGE } from '../constants';
 import { UpdateArtistInfoDto } from './dto/update-artist-info.dto';
 
 @Controller('artist')

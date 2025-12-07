@@ -14,7 +14,7 @@ import {
 import { AlbumsService } from './albums.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
-import { ERROR_MESSAGE } from 'src/constants';
+import { ERROR_MESSAGE } from '../constants';
 
 @Controller('album')
 export class AlbumsController {

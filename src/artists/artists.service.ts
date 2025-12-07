@@ -4,11 +4,11 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { PrismaService } from 'src/shared';
-import { ERROR_MESSAGE } from 'src/constants';
-import { AlbumsService } from 'src/albums/albums.service';
-import { TracksService } from 'src/tracks/tracks.service';
-import { FavoritesService } from 'src/favorites/favorites.service';
+import { PrismaService } from '../shared/prisma.service';
+import { ERROR_MESSAGE } from '../constants';
+import { AlbumsService } from '../albums/albums.service';
+import { TracksService } from '../tracks/tracks.service';
+import { FavoritesService } from '../favorites/favorites.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistInfoDto } from './dto/update-artist-info.dto';
 

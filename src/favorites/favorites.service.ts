@@ -1,10 +1,10 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { PrismaService } from 'src/shared';
-import { AlbumsService } from 'src/albums/albums.service';
-import { ArtistsService } from 'src/artists/artists.service';
-import { TracksService } from 'src/tracks/tracks.service';
-import { ERROR_MESSAGE, PRISMA_ERROR } from 'src/constants';
+import { PrismaService } from '../shared/prisma.service';
+import { AlbumsService } from '../albums/albums.service';
+import { ArtistsService } from '../artists/artists.service';
+import { TracksService } from '../tracks/tracks.service';
+import { ERROR_MESSAGE, PRISMA_ERROR } from '../constants';
 import { Favorites } from './entities/favorite.entity';
 
 interface RemoveFavoriteOptions {
