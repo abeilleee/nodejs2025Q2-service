@@ -8,13 +8,13 @@ COPY package*.json ./
 COPY ./tsconfig.json ./
 COPY prisma/schema.prisma ./prisma/
 
-RUN npm ci && npm cache clean --force
+RUN npm ci --include=dev && npm cache clean --force
 
 RUN npx prisma generate
 
-COPY . .
-
 RUN npm run build
+
+RUN npm prune --production
 
 FROM node:22-alpine
 
@@ -24,14 +24,10 @@ RUN apk add --no-cache openssl
 
 COPY package*.json ./
 COPY ./tsconfig.json ./
-
-RUN npm ci --omit=dev && npm cache clean --force
-
-COPY ./src ./src
 COPY ./doc ./doc
-COPY ./prisma ./prisma
 
+COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /app/prisma ./prisma
 
 CMD ["sh", "-c", "npm run start:poll"]
