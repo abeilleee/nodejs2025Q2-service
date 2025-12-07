@@ -130,6 +130,20 @@ docker-compose up -d
 docker-compose exec app npm run prisma:migrate
 ```
 
+## 📈 Scanning for vulnerabilities
+
+#### Scan application image for critical/high vulnerabilities
+
+```
+npm run docker:scan:app
+```
+
+#### Scan database image for critical/high vulnerabilities
+
+```
+npm run docker:scan:db
+```
+
 ## 🧪 Testing
 
 After application running open new terminal and enter:

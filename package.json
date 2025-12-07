@@ -33,7 +33,8 @@
     "docker:down": "docker-compose down",
     "docker:logs": "docker-compose logs -f",
     "docker:dev": "docker-compose up --build",
-    "security:scan": "npm audit --audit-level=high",
+    "docker:scan:app": "docker scout cves nodejs2025q2-service-app:latest --only-severity critical,high --exit-code",
+    "docker:scan:db": "docker scout cves postgres:18-alpine --only-severity critical,high --exit-code",
     "size:check": "docker images nodejs2025q2-service-app --format '{{.Size}}'"
   },
   "dependencies": {
