@@ -25,10 +25,31 @@ A comprehensive REST API for managing a personal music library with artists, alb
 git clone https://github.com/abeilleee/nodejs2025Q2-service.git
 ```
 
-2. Configure Environment Variables, create a .env file in the project root
+2. Install all dependencies
+```
+npm install
+```
+
+3. Configure Environment Variables, create a .env file in the project root
 
 ```
-copy env.example .env
+PORT=4000
+
+CRYPT_SALT=10
+JWT_SECRET_KEY=secret123123
+JWT_SECRET_REFRESH_KEY=secret123123
+TOKEN_EXPIRE_TIME=1h
+TOKEN_REFRESH_EXPIRE_TIME=24h
+
+# Database
+POSTGRES_PORT=5432
+POSTGRES_DB=home_library
+POSTGRES_USER=admin
+POSTGRES_PASSWORD=secret
+POSTGRES_HOST=postgres
+
+# Prisma
+DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:${POSTGRES_PORT}/${POSTGRES_DB}?schema=public
 ```
 
 3. Start the Application (open Docker Desktop to run the app)
@@ -37,9 +58,6 @@ copy env.example .env
 # Build images and start all services
 npm run docker:build
 npm run docker:up
-
-# Stop all services
-npm run docker:down
 
 # View logs
 npm run docker:logs
