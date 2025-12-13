@@ -1,5 +1,13 @@
-export const LOG_DIRECTORY = 'logs';
+export const LOG_DIRECTORY = '/app/logs';
 export const MAX_FILE_SIZE_KB = '1024';
+export const SENSITIVE_DATA = [
+  'password',
+  'token',
+  'refreshToken',
+  'oldPassword',
+  'newPassword',
+];
+export const HIDDEN = '***HIDDEN***';
 
 export const enum ERROR_MESSAGE {
   NOT_FOUND = 'Not found',

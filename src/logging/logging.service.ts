@@ -1,4 +1,10 @@
-import { mkdir, stat, appendFile, rename, writeFile } from 'node:fs/promises';
+import {
+  statSync,
+  appendFileSync,
+  renameSync,
+  writeFileSync,
+  existsSync,
+} from 'node:fs';
 import { join, basename } from 'node:path';
 import { Injectable, LoggerService, LogLevel } from '@nestjs/common';
 import {
@@ -11,7 +17,6 @@ import {
 @Injectable()
 export class LoggingService implements LoggerService {
   private context?: string;
-  private logDirectory: string;
   private mainLogFile: string;
   private errorLogFile: string;
   private maxFileSizeKB: number;
@@ -20,18 +25,9 @@ export class LoggingService implements LoggerService {
     this.maxFileSizeKB = parseInt(
       process.env.LOG_MAX_FILE_SIZE_KB || MAX_FILE_SIZE_KB,
     );
-    this.logDirectory = join(process.cwd(), LOG_DIRECTORY);
-    this.mainLogFile = join(this.logDirectory, LOG_FILE_NAME.APP);
-    this.errorLogFile = join(this.logDirectory, LOG_FILE_NAME.ERROR);
-  }
-
-  public async initialize() {
-    try {
-      await mkdir(this.logDirectory, { recursive: true });
-    } catch (error) {
-      console.error('Failed to initialize logging service:', error);
-      throw error;
-    }
+    this.mainLogFile = join(LOG_DIRECTORY, LOG_FILE_NAME.APP);
+    this.errorLogFile = join(LOG_DIRECTORY, LOG_FILE_NAME.ERROR);
+    this.initializeLogFiles();
   }
 
   public setContext(context: string) {
@@ -58,6 +54,22 @@ export class LoggingService implements LoggerService {
     this.writeLog(LOG_LEVEL.VERBOSE, message);
   }
 
+  private initializeLogFiles() {
+    try {
+      const files = [this.mainLogFile, this.errorLogFile];
+
+      for (const file of files) {
+        if (!existsSync(file)) {
+          writeFileSync(file, '', 'utf8');
+        } else {
+          continue;
+        }
+      }
+    } catch (error) {
+      console.error('Error while creating log files');
+    }
+  }
+
   private async writeLog(
     level: LogLevel,
     message: unknown,
@@ -80,27 +92,27 @@ export class LoggingService implements LoggerService {
     console.log(logMessage.trim());
 
     try {
-      await this.checkFileSize();
-      await appendFile(this.mainLogFile, logMessage, 'utf8');
+      this.checkFileSize();
+      appendFileSync(this.mainLogFile, logMessage, 'utf8');
 
       if (level === LOG_LEVEL.ERROR) {
-        await appendFile(this.errorLogFile, logMessage, 'utf8');
+        appendFileSync(this.errorLogFile, logMessage, 'utf8');
       }
     } catch (error) {
-      console.error('Failed to write to file:', error);
+      console.error('Failed to write to log file:', error);
     }
   }
 
-  private async checkFileSize() {
+  private checkFileSize() {
     const files = [this.mainLogFile, this.errorLogFile];
 
     for (const filePath of files) {
       try {
-        const stats = await stat(filePath);
+        const stats = statSync(filePath);
         const fileSizeKB = stats.size / Number(MAX_FILE_SIZE_KB);
 
         if (fileSizeKB > this.maxFileSizeKB) {
-          await this.rotateFile(filePath);
+          this.rotateFile(filePath);
         }
       } catch (error) {
         continue;
@@ -108,13 +120,13 @@ export class LoggingService implements LoggerService {
     }
   }
 
-  private async rotateFile(filePath: string) {
+  private rotateFile(filePath: string) {
     try {
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
       const newPath = filePath.replace('.log', `.${timestamp}.log`);
 
-      await rename(filePath, newPath);
-      await writeFile(filePath, '', 'utf8');
+      renameSync(filePath, newPath);
+      writeFileSync(filePath, '', 'utf8');
 
       console.log(`Rotate file: ${basename(filePath)}`);
     } catch (error) {
