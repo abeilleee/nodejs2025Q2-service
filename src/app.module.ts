@@ -10,6 +10,7 @@ import { UsersModule } from './users/user.module';
 import { PrismaModule } from './shared/prisma.module';
 import { GlobalExceptionFilter } from './filters/global-exception.filter';
 import { LoggingInterceptor } from './interceptors/logging.interceptor';
+import { LoggingService } from './logging/logging.service';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { LoggingInterceptor } from './interceptors/logging.interceptor';
   ],
   controllers: [AppController],
   providers: [
+    LoggingService,
     AppService,
     {
       provide: APP_FILTER,

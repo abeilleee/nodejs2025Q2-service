@@ -141,8 +141,6 @@ export class LoggingService implements LoggerService {
   private getLogLevelFromEnv() {
     const level = process.env.LOG_LEVEL;
 
-    console.log(' LEVEL: ', level);
-
     switch (level) {
       case 'ERROR':
         return LOG_LEVEL.ERROR;
