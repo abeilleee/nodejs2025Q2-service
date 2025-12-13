@@ -89,7 +89,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         `${request.method} ${request.url} - ${statusCode}: ${errorMessage}`,
       );
     } else {
-      this.logger.log(
+      this.logger.debug(
         `${request.method} ${request.url} - ${statusCode}: ${errorMessage}`,
       );
     }
