@@ -8,7 +8,6 @@ import { LoggingService } from './logging/logging.service';
 
 async function bootstrap() {
   const logger = new LoggingService();
-  await logger.initialize();
   const app = await NestFactory.create(AppModule, { logger });
   const document = await loadSwaggerDocument();
 
