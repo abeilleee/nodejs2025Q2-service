@@ -1,4 +1,4 @@
-export const LOG_DIRECTORY = '/app/logs';
+export const LOGS_DIRECTORY = 'logs';
 export const MAX_FILE_SIZE_KB = 1024;
 export const SENSITIVE_DATA = [
   'password',

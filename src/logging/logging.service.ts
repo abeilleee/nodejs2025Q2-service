@@ -9,14 +9,15 @@ import { join, basename } from 'node:path';
 import { Injectable, LoggerService } from '@nestjs/common';
 import {
   MAX_FILE_SIZE_KB,
-  LOG_DIRECTORY,
   LOG_FILE_NAME,
   LOG_LEVEL,
+  LOGS_DIRECTORY,
 } from '../constants';
 
 @Injectable()
 export class LoggingService implements LoggerService {
   private context?: string;
+  private currentDirectory: string;
   private mainLogFile: string;
   private errorLogFile: string;
   private maxFileSizeKB: number;
@@ -24,9 +25,10 @@ export class LoggingService implements LoggerService {
 
   constructor() {
     this.currentLogLevel = this.getLogLevelFromEnv();
-    (this.maxFileSizeKB = process.env.LOG_MAX_FILE_SIZE_KB || MAX_FILE_SIZE_KB),
-      (this.mainLogFile = join(LOG_DIRECTORY, LOG_FILE_NAME.APP));
-    this.errorLogFile = join(LOG_DIRECTORY, LOG_FILE_NAME.ERROR);
+    this.maxFileSizeKB = process.env.LOG_MAX_FILE_SIZE_KB || MAX_FILE_SIZE_KB;
+    this.currentDirectory = join(process.cwd(), LOGS_DIRECTORY);
+    this.mainLogFile = join(this.currentDirectory, LOG_FILE_NAME.APP);
+    this.errorLogFile = join(this.currentDirectory, LOG_FILE_NAME.ERROR);
     this.initializeLogFiles();
   }
 
