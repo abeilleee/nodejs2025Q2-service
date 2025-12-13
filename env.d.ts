@@ -12,5 +12,7 @@ declare namespace NodeJS {
     POSTGRES_PASSWORD: string;
     POSTGRES_HOST: string;
     DATABASE_URL: string;
+    LOG_LEVEL: 'ERROR' | 'WARN' | 'LOG' | 'DEBUG' | 'VERBOSE';
+    LOG_MAX_FILE_SIZE_KB: number;
   }
 }

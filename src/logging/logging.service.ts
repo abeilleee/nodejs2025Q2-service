@@ -6,7 +6,7 @@ import {
   existsSync,
 } from 'node:fs';
 import { join, basename } from 'node:path';
-import { Injectable, LoggerService, LogLevel } from '@nestjs/common';
+import { Injectable, LoggerService } from '@nestjs/common';
 import {
   MAX_FILE_SIZE_KB,
   LOG_DIRECTORY,
@@ -20,12 +20,12 @@ export class LoggingService implements LoggerService {
   private mainLogFile: string;
   private errorLogFile: string;
   private maxFileSizeKB: number;
+  private currentLogLevel: LOG_LEVEL;
 
   constructor() {
-    this.maxFileSizeKB = parseInt(
-      process.env.LOG_MAX_FILE_SIZE_KB || MAX_FILE_SIZE_KB,
-    );
-    this.mainLogFile = join(LOG_DIRECTORY, LOG_FILE_NAME.APP);
+    this.currentLogLevel = this.getLogLevelFromEnv();
+    (this.maxFileSizeKB = process.env.LOG_MAX_FILE_SIZE_KB || MAX_FILE_SIZE_KB),
+      (this.mainLogFile = join(LOG_DIRECTORY, LOG_FILE_NAME.APP));
     this.errorLogFile = join(LOG_DIRECTORY, LOG_FILE_NAME.ERROR);
     this.initializeLogFiles();
   }
@@ -71,10 +71,14 @@ export class LoggingService implements LoggerService {
   }
 
   private async writeLog(
-    level: LogLevel,
+    level: LOG_LEVEL,
     message: unknown,
     error?: Error | unknown,
   ) {
+    if (level > this.currentLogLevel) {
+      return;
+    }
+
     const timestamp = new Date().toLocaleString();
     const context = this.context ? `[${this.context}] ` : '';
     let logMessage = `${timestamp} ${level} ${context}${message}\n`;
@@ -131,6 +135,32 @@ export class LoggingService implements LoggerService {
       console.log(`Rotate file: ${basename(filePath)}`);
     } catch (error) {
       console.error('Error while rotating file', error);
+    }
+  }
+
+  private getLogLevelFromEnv() {
+    const level = process.env.LOG_LEVEL;
+
+    console.log(' LEVEL: ', level);
+
+    switch (level) {
+      case 'ERROR':
+        return LOG_LEVEL.ERROR;
+
+      case 'WARN':
+        return LOG_LEVEL.WARN;
+
+      case 'LOG':
+        return LOG_LEVEL.LOG;
+
+      case 'DEBUG':
+        return LOG_LEVEL.DEBUG;
+
+      case 'VERBOSE':
+        return LOG_LEVEL.VERBOSE;
+
+      default:
+        return LOG_LEVEL.LOG;
     }
   }
 }

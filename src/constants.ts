@@ -1,5 +1,5 @@
 export const LOG_DIRECTORY = '/app/logs';
-export const MAX_FILE_SIZE_KB = '1024';
+export const MAX_FILE_SIZE_KB = 1024;
 export const SENSITIVE_DATA = [
   'password',
   'token',
@@ -36,9 +36,17 @@ export const LOG_FILE_NAME = {
 };
 
 export enum LOG_LEVEL {
-  VERBOSE = 'verbose',
-  DEBUG = 'debug',
-  LOG = 'log',
-  WARN = 'warn',
-  ERROR = 'error',
+  ERROR = 0,
+  WARN = 1,
+  LOG = 2,
+  DEBUG = 3,
+  VERBOSE = 4,
 }
+
+export const LOG_LEVEL_NAMES = {
+  [LOG_LEVEL.ERROR]: 'ERROR',
+  [LOG_LEVEL.WARN]: 'WARN',
+  [LOG_LEVEL.LOG]: 'LOG',
+  [LOG_LEVEL.DEBUG]: 'DEBUG',
+  [LOG_LEVEL.VERBOSE]: 'VERBOSE',
+};
