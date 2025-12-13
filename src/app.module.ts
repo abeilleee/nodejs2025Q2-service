@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { APP_FILTER } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TracksModule } from './tracks/tracks.modules';
@@ -7,6 +8,7 @@ import { AlbumsModule } from './albums/albums.module';
 import { FavoritesModule } from './favorites/favorites.module';
 import { UsersModule } from './users/user.module';
 import { PrismaModule } from './shared/prisma.module';
+import { GlobalExceptionFilter } from './filters/global-exception.filter';
 
 @Module({
   imports: [
@@ -18,6 +20,12 @@ import { PrismaModule } from './shared/prisma.module';
     FavoritesModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_FILTER,
+      useClass: GlobalExceptionFilter,
+    },
+  ],
 })
 export class AppModule {}

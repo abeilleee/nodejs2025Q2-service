@@ -5,6 +5,9 @@ export const enum ERROR_MESSAGE {
   NOT_FOUND = 'Not found',
   INVALID_UUID = 'Invalid ID',
   DOES_NOT_EXIST = 'does not exist',
+  HTTP_ERROR = 'Http Error',
+  UNKNOWN_ERROR = 'Unknown error',
+  INTERNAL_SERVER_ERROR = 'Internal server error',
 }
 
 export const enum USER_ERROR_MESSAGE {

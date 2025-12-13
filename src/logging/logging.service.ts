@@ -1,5 +1,5 @@
-import fs from 'node:fs/promises';
-import path from 'node:path';
+import { mkdir, stat, appendFile, rename, writeFile } from 'node:fs/promises';
+import { join, basename } from 'node:path';
 import { Injectable, LoggerService, LogLevel } from '@nestjs/common';
 import {
   MAX_FILE_SIZE_KB,
@@ -20,14 +20,14 @@ export class LoggingService implements LoggerService {
     this.maxFileSizeKB = parseInt(
       process.env.LOG_MAX_FILE_SIZE_KB || MAX_FILE_SIZE_KB,
     );
-    this.logDirectory = path.join(process.cwd(), LOG_DIRECTORY);
-    this.mainLogFile = path.join(this.logDirectory, LOG_FILE_NAME.APP);
-    this.errorLogFile = path.join(this.logDirectory, LOG_FILE_NAME.ERROR);
+    this.logDirectory = join(process.cwd(), LOG_DIRECTORY);
+    this.mainLogFile = join(this.logDirectory, LOG_FILE_NAME.APP);
+    this.errorLogFile = join(this.logDirectory, LOG_FILE_NAME.ERROR);
   }
 
   public async initialize() {
     try {
-      await fs.mkdir(this.logDirectory, { recursive: true });
+      await mkdir(this.logDirectory, { recursive: true });
     } catch (error) {
       console.error('Failed to initialize logging service:', error);
       throw error;
@@ -38,8 +38,8 @@ export class LoggingService implements LoggerService {
     this.context = context;
   }
 
-  public error(message: unknown) {
-    this.writeLog(LOG_LEVEL.ERROR, message);
+  public error(message: unknown, error?: Error | unknown) {
+    this.writeLog(LOG_LEVEL.ERROR, message, error);
   }
 
   public warn(message: unknown) {
@@ -58,19 +58,33 @@ export class LoggingService implements LoggerService {
     this.writeLog(LOG_LEVEL.VERBOSE, message);
   }
 
-  private async writeLog(level: LogLevel, message: unknown) {
+  private async writeLog(
+    level: LogLevel,
+    message: unknown,
+    error?: Error | unknown,
+  ) {
     const timestamp = new Date().toLocaleString();
     const context = this.context ? `[${this.context}] ` : '';
-    const logMessage = `${timestamp} ${level} ${context}${message}\n`;
+    let logMessage = `${timestamp} ${level} ${context}${message}\n`;
+
+    if (error instanceof Error && error.stack) {
+      logMessage += `${error.stack}\n`;
+    } else if (error && typeof error === 'object') {
+      try {
+        logMessage += `Details: ${JSON.stringify(error, null, 2)}\n`;
+      } catch {
+        logMessage += `Details: [Unserializable object]\n`;
+      }
+    }
 
     console.log(logMessage.trim());
 
     try {
       await this.checkFileSize();
-      await fs.appendFile(this.mainLogFile, logMessage, 'utf8');
+      await appendFile(this.mainLogFile, logMessage, 'utf8');
 
       if (level === LOG_LEVEL.ERROR) {
-        await fs.appendFile(this.errorLogFile, logMessage, 'utf8');
+        await appendFile(this.errorLogFile, logMessage, 'utf8');
       }
     } catch (error) {
       console.error('Failed to write to file:', error);
@@ -82,9 +96,10 @@ export class LoggingService implements LoggerService {
 
     for (const filePath of files) {
       try {
-        const stats = await fs.stat(filePath);
+        const stats = await stat(filePath);
+        const fileSizeKB = stats.size / Number(MAX_FILE_SIZE_KB);
 
-        if (stats.size / Number(MAX_FILE_SIZE_KB) > this.maxFileSizeKB) {
+        if (fileSizeKB > this.maxFileSizeKB) {
           await this.rotateFile(filePath);
         }
       } catch (error) {
@@ -95,13 +110,13 @@ export class LoggingService implements LoggerService {
 
   private async rotateFile(filePath: string) {
     try {
-      const timestamp = new Date().toLocaleString();
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
       const newPath = filePath.replace('.log', `.${timestamp}.log`);
 
-      await fs.rename(filePath, newPath);
-      await fs.writeFile(filePath, '', 'utf8');
+      await rename(filePath, newPath);
+      await writeFile(filePath, '', 'utf8');
 
-      console.log(`Rotate file: ${path.basename(filePath)}`);
+      console.log(`Rotate file: ${basename(filePath)}`);
     } catch (error) {
       console.error('Error while rotating file', error);
     }
