@@ -1,3 +1,6 @@
+export const LOG_DIRECTORY = 'logs';
+export const MAX_FILE_SIZE_KB = '1024';
+
 export const enum ERROR_MESSAGE {
   NOT_FOUND = 'Not found',
   INVALID_UUID = 'Invalid ID',
@@ -14,4 +17,17 @@ export const enum USER_ERROR_MESSAGE {
 export const enum PRISMA_ERROR {
   CONSTRAINT_ERROR = 'P2002',
   QUERY_ERROR = 'P2025',
+}
+
+export const LOG_FILE_NAME = {
+  APP: 'app.log',
+  ERROR: 'error.log',
+};
+
+export enum LOG_LEVEL {
+  VERBOSE = 'verbose',
+  DEBUG = 'debug',
+  LOG = 'log',
+  WARN = 'warn',
+  ERROR = 'error',
 }
