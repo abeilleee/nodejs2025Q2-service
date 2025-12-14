@@ -28,7 +28,7 @@ export class UsersService {
     return this.excludeUserPassword(user);
   }
 
-  public async getUserBylogin(login: string, receivedPassword?: string) {
+  public async getUserBylogin(login: string) {
     const user = await this.prisma.user.findUnique({
       where: { login },
     });

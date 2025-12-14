@@ -42,10 +42,7 @@ export class AuthService {
       throw new BadRequestException('Password must be a non-empty string');
     }
 
-    const existingUser = await this.usersService.getUserBylogin(
-      login,
-      password,
-    );
+    const existingUser = await this.usersService.getUserBylogin(login);
 
     if (!existingUser) {
       throw new ForbiddenException('No user with such login');
@@ -67,7 +64,7 @@ export class AuthService {
     const refreshToken = await this.jwtService.signAsync(
       payload as any,
       {
-        secret: process.env.JWT_REFRESH_SECRET,
+        secret: process.env.JWT_SECRET_REFRESH_KEY,
         expiresIn: process.env.TOKEN_REFRESH_EXPIRE_TIME,
       } as JwtSignOptions,
     );
@@ -77,7 +74,7 @@ export class AuthService {
 
   public async refresh(refreshTokenDto: RefreshTokenDto) {
     const { refreshToken } = refreshTokenDto;
-    const refreshSecret = process.env.JWT_REFRESH_SECRET;
+    const refreshSecret = process.env.JWT_SECRET_REFRESH_KEY;
     let decoded: Payload | null;
 
     if (!refreshToken) {
@@ -85,7 +82,7 @@ export class AuthService {
     }
 
     if (!refreshSecret) {
-      throw new Error('JWT_REFRESH_SECRET is not configured');
+      throw new Error('JWT_SECRET_REFRESH_KEY is not configured');
     }
 
     try {
@@ -93,7 +90,7 @@ export class AuthService {
         secret: refreshSecret,
       });
     } catch (error) {
-      let errorMsg =
+      const errorMsg =
         error.name === 'TokenExpiredError'
           ? ERROR_MESSAGE.TOKEN_EXPIRED
           : ERROR_MESSAGE.INVALID_TOKEN;
@@ -108,11 +105,10 @@ export class AuthService {
       throw new Error();
     }
 
-    const accessPayload = { userId: user.id, login: user.login };
-    const refreshPayload = { userId: user.id };
+    const payload = { userId: user.id, login: user.login };
 
     const newAccessToken = await this.jwtService.signAsync(
-      accessPayload as any,
+      payload as any,
       {
         secret: process.env.JWT_SECRET_KEY,
         expiresIn: process.env.TOKEN_EXPIRE_TIME,
@@ -120,9 +116,9 @@ export class AuthService {
     );
 
     const newRefreshToken = await this.jwtService.signAsync(
-      refreshPayload as any,
+      payload as any,
       {
-        secret: process.env.JWT_REFRESH_SECRET,
+        secret: process.env.JWT_SECRET_REFRESH_KEY,
         expiresIn: process.env.TOKEN_REFRESH_EXPIRE_TIME,
       } as JwtSignOptions,
     );
