@@ -95,7 +95,7 @@ npm run size:check
 After starting the application, you can explore the interactive API documentation with Open API:
 
 ```
-http://localhost:4000/api
+http://localhost:4000/doc
 ```
 
 Features:
