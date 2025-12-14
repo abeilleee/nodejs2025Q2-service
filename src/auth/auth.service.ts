@@ -96,7 +96,7 @@ export class AuthService {
       let errorMsg =
         error.name === 'TokenExpiredError'
           ? ERROR_MESSAGE.TOKEN_EXPIRED
-          : ERROR_MESSAGE.INVALID_REFRESH_TOKEN;
+          : ERROR_MESSAGE.INVALID_TOKEN;
 
       throw new ForbiddenException(errorMsg || ERROR_MESSAGE.VALIDATION_FAILED);
     }

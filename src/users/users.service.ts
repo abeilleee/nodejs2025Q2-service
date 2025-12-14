@@ -28,6 +28,18 @@ export class UsersService {
     return this.excludeUserPassword(user);
   }
 
+  public async getUserBylogin(login: string, receivedPassword?: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { login },
+    });
+
+    if (!user) {
+      return null;
+    }
+
+    return this.excludeUserPassword(user);
+  }
+
   public async getAllUsers() {
     const allUsers = await this.prisma.user.findMany({
       orderBy: { createdAt: 'desc' },

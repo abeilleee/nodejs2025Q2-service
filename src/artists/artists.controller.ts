@@ -10,13 +10,16 @@ import {
   HttpStatus,
   NotFoundException,
   ParseUUIDPipe,
+  UseGuards,
 } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ArtistsService } from './artists.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { ERROR_MESSAGE } from '../constants';
 import { UpdateArtistInfoDto } from './dto/update-artist-info.dto';
 
 @Controller('artist')
+@UseGuards(JwtAuthGuard)
 export class ArtistsController {
   constructor(private readonly artistsService: ArtistsService) {}
 

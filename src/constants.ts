@@ -16,6 +16,9 @@ export const enum ERROR_MESSAGE {
   HTTP_ERROR = 'Http Error',
   UNKNOWN_ERROR = 'Unknown error',
   INTERNAL_SERVER_ERROR = 'Internal server error',
+  TOKEN_EXPIRED = 'Token has expired',
+  INVALID_TOKEN = 'Invalid token',
+  VALIDATION_FAILED = 'Refresh token validation failed',
 }
 
 export const enum USER_ERROR_MESSAGE {

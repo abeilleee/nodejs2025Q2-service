@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_FILTER, APP_INTERCEPTOR, Reflector } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TracksModule } from './tracks/tracks.modules';
@@ -11,20 +11,29 @@ import { PrismaModule } from './shared/prisma.module';
 import { GlobalExceptionFilter } from './filters/global-exception.filter';
 import { LoggingInterceptor } from './interceptors/logging.interceptor';
 import { LoggingService } from './logging/logging.service';
+import { AuthModule } from './auth/auth.module';
+import { JwtAuthModule } from './auth/jwt-auth.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     PrismaModule,
     UsersModule,
     TracksModule,
     ArtistsModule,
     AlbumsModule,
     FavoritesModule,
+    AuthModule,
+    JwtAuthModule,
   ],
   controllers: [AppController],
   providers: [
     LoggingService,
     AppService,
+    Reflector,
     {
       provide: APP_FILTER,
       useClass: GlobalExceptionFilter,
