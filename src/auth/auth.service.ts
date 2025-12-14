@@ -1,3 +1,4 @@
+import * as bcrypt from 'bcrypt';
 import {
   Injectable,
   BadRequestException,
@@ -9,6 +10,7 @@ import { UsersService } from '../users/users.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { ERROR_MESSAGE } from '../constants';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { PrismaService } from '../shared/prisma.service';
 
 export interface Payload {
   login: string;
@@ -20,13 +22,11 @@ export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
+    private readonly prisma: PrismaService,
   ) {}
 
   public async signUp(signupDto: CreateUserDto) {
-    const user = await this.usersService.create({
-      login: signupDto.login,
-      password: signupDto.password,
-    });
+    const user = await this.usersService.create(signupDto);
 
     return user;
   }
@@ -46,6 +46,16 @@ export class AuthService {
 
     if (!existingUser) {
       throw new ForbiddenException('No user with such login');
+    }
+
+    const fullUser = await this.prisma.user.findUnique({
+      where: { login },
+    });
+
+    const isPasswordValid = await bcrypt.compare(password, fullUser.password);
+
+    if (!isPasswordValid) {
+      throw new ForbiddenException('Invalid password');
     }
 
     const payload = {
