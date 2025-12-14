@@ -11,6 +11,7 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -24,9 +25,11 @@ import { UsersResponseDto } from './dto/user-response.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { USER_ERROR_MESSAGE } from '../constants';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @ApiTags('User')
 @Controller('user')
+@UseGuards(JwtAuthGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 

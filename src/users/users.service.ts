@@ -1,3 +1,4 @@
+import * as bcrypt from 'bcrypt';
 import { Injectable } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { PrismaService } from '../shared/prisma.service';
@@ -11,8 +12,14 @@ export class UsersService {
   constructor(private prisma: PrismaService) {}
 
   public async create(createUserDto: CreateUserDto) {
+    const { login, password } = createUserDto;
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const user = await this.prisma.user.create({
-      data: createUserDto,
+      data: {
+        login,
+        password: hashedPassword,
+      },
     });
 
     return plainToInstance(UsersResponseDto, user, {
@@ -24,6 +31,18 @@ export class UsersService {
     const user = await this.prisma.user.findUnique({
       where: { id },
     });
+
+    return this.excludeUserPassword(user);
+  }
+
+  public async getUserBylogin(login: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { login },
+    });
+
+    if (!user) {
+      return null;
+    }
 
     return this.excludeUserPassword(user);
   }
@@ -46,15 +65,25 @@ export class UsersService {
 
     if (!user) throw new Error(USER_ERROR_MESSAGE.NOT_FOUND);
 
-    if (user.password !== updatePasswordDto.oldPassword)
+    const isOldPasswordValid = await bcrypt.compare(
+      updatePasswordDto.oldPassword,
+      user.password,
+    );
+
+    if (!isOldPasswordValid)
       throw new Error(USER_ERROR_MESSAGE.OLD_PASSWORD_INCORRECT);
+
+    const hashedNewPassword = await bcrypt.hash(
+      updatePasswordDto.newPassword,
+      10,
+    );
 
     try {
       const updatedUser = await this.prisma.user.update({
         where: { id },
         data: {
           version: { increment: 1 },
-          password: updatePasswordDto.newPassword,
+          password: hashedNewPassword,
         },
       });
 

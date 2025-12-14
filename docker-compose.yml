@@ -35,12 +35,14 @@ services:
       JWT_SECRET_REFRESH_KEY: ${JWT_SECRET_REFRESH_KEY}
       TOKEN_EXPIRE_TIME: ${TOKEN_EXPIRE_TIME}
       TOKEN_REFRESH_EXPIRE_TIME: ${TOKEN_REFRESH_EXPIRE_TIME}
+      LOG_LEVEL: ${LOG_LEVEL}
+      LOG_MAX_FILE_SIZE_KB: ${LOG_MAX_FILE_SIZE_KB}
     depends_on:
       postgres:
         condition: service_healthy
     volumes:
       - ./src:/app/src
-      - app-logs:/app/logs
+      - ./logs:/app/logs
       - /app/node_modules
     networks:
       - home-library-network
@@ -48,7 +50,6 @@ services:
 volumes:
   postgres_data:
   postgres-logs:
-  app-logs:
 
 networks:
   home-library-network:
