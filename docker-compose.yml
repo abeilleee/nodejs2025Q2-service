@@ -20,8 +20,7 @@ services:
       timeout: 5s
       retries: 5
   app:
-    build: .
-    image: nodejs2025q2-service-app
+    image: abeilleee/home-library-service:app
     container_name: home-library-app
     restart: unless-stopped
     ports:
