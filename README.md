@@ -40,9 +40,11 @@ cp .env.example .env
 3. Start the Application (open Docker Desktop to run the app)
 
 ```
-# Build images and start all services
-npm run docker:build
+# Start all services
 npm run docker:up
+
+# Apply migrations
+npm run prisma:migrate
 
 # View logs
 npm run docker:logs
