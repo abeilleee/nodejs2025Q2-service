@@ -23,7 +23,7 @@ import { UsersService } from './users.service';
 import { UsersResponseDto } from './dto/user-response.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
-import { USER_ERROR_MESSAGE } from 'src/constants';
+import { USER_ERROR_MESSAGE } from '../constants';
 
 @ApiTags('User')
 @Controller('user')
@@ -35,7 +35,7 @@ export class UsersController {
    *
    * @method GET
    * @endpoint /user
-   * @returns {UsersResponseDto[]} array withous passwords
+   * @returns {UsersResponseDto[]} array without passwords
    */
   @Get()
   @ApiOperation({ summary: 'Get all users' })
@@ -44,8 +44,8 @@ export class UsersController {
     description: 'Get all users',
     type: UsersResponseDto,
   })
-  getAll() {
-    return this.usersService.getAllUsers();
+  async getAll() {
+    return await this.usersService.getAllUsers();
   }
 
   /**
@@ -77,14 +77,12 @@ export class UsersController {
     status: HttpStatus.NOT_FOUND,
     description: 'User with specified ID was not found',
   })
-  getUserById(@Param('id', ParseUUIDPipe) id: string) {
-    const user = this.usersService.getById(id);
+  async getUserById(@Param('id', ParseUUIDPipe) id: string) {
+    const user = await this.usersService.getUserById(id);
 
     if (!user) throw new NotFoundException(USER_ERROR_MESSAGE.DOES_NOT_EXIST);
 
-    const userData = this.usersService.excludeUserPassword(user);
-
-    return userData;
+    return user;
   }
 
   /**
@@ -111,8 +109,8 @@ export class UsersController {
     status: HttpStatus.BAD_REQUEST,
     description: 'Request body does not contain required field',
   })
-  createUser(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  async createUser(@Body() createUserDto: CreateUserDto) {
+    return await this.usersService.create(createUserDto);
   }
 
   /**
@@ -153,12 +151,12 @@ export class UsersController {
     status: HttpStatus.FORBIDDEN,
     description: 'Old password is incorrect',
   })
-  updatePassword(
+  async updatePassword(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updatePasswordDto: UpdatePasswordDto,
   ) {
     try {
-      return this.usersService.updatePassword(id, updatePasswordDto);
+      return await this.usersService.updatePassword(id, updatePasswordDto);
     } catch (error) {
       if (error.message === USER_ERROR_MESSAGE.NOT_FOUND) {
         throw new NotFoundException(USER_ERROR_MESSAGE.DOES_NOT_EXIST);
@@ -198,9 +196,9 @@ export class UsersController {
     status: HttpStatus.NOT_FOUND,
     description: 'User with specified ID was not found',
   })
-  deleteUser(@Param('id', ParseUUIDPipe) id: string) {
+  async deleteUser(@Param('id', ParseUUIDPipe) id: string) {
     try {
-      this.usersService.deleteUser(id);
+      await this.usersService.deleteUser(id);
     } catch (error) {
       if (error.message === USER_ERROR_MESSAGE.NOT_FOUND)
         throw new NotFoundException(USER_ERROR_MESSAGE.DOES_NOT_EXIST);

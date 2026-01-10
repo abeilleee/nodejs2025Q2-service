@@ -1,7 +1,20 @@
+import { Expose, Transform } from 'class-transformer';
+
 export class UsersResponseDto {
+  @Expose()
   id: string;
+
+  @Expose()
   login: string;
+
+  @Expose()
   version: number;
-  createdAt: number;
-  updatedAt: number;
+
+  @Expose()
+  @Transform(({ value }) => value.getTime())
+  createdAt: Date;
+
+  @Expose()
+  @Transform(({ value }) => value.getTime())
+  updatedAt: Date;
 }

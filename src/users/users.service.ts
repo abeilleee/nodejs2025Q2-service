@@ -1,67 +1,84 @@
 import { Injectable } from '@nestjs/common';
-import { BaseService } from 'src/common';
-import { USER_ERROR_MESSAGE } from 'src/constants';
+import { plainToInstance } from 'class-transformer';
+import { PrismaService } from '../shared/prisma.service';
+import { USER_ERROR_MESSAGE } from '../constants';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
-import { User } from './entities/user.entity';
+import { UsersResponseDto } from './dto/user-response.dto';
 
 @Injectable()
-export class UsersService extends BaseService<User> {
-  constructor() {
-    super();
+export class UsersService {
+  constructor(private prisma: PrismaService) {}
+
+  public async create(createUserDto: CreateUserDto) {
+    const user = await this.prisma.user.create({
+      data: createUserDto,
+    });
+
+    return plainToInstance(UsersResponseDto, user, {
+      excludeExtraneousValues: true,
+    });
   }
 
-  public create(createUserDto: CreateUserDto) {
-    const id = this.generateId();
+  public async getUserById(id: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+    });
 
-    const user: User = {
-      id,
-      ...createUserDto,
-      version: 1,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-    };
-
-    this.items.set(id, user);
-    const userWithoutPassword = this.excludeUserPassword(user);
-
-    return userWithoutPassword;
+    return this.excludeUserPassword(user);
   }
 
-  public getAllUsers() {
-    const allUsers = this.getAll();
+  public async getAllUsers() {
+    const allUsers = await this.prisma.user.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
 
     return allUsers.map((user) => this.excludeUserPassword(user));
   }
 
-  public updatePassword(id: string, updatePasswordDto: UpdatePasswordDto) {
-    const user = this.items.get(id);
+  public async updatePassword(
+    id: string,
+    updatePasswordDto: UpdatePasswordDto,
+  ) {
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+    });
 
     if (!user) throw new Error(USER_ERROR_MESSAGE.NOT_FOUND);
 
     if (user.password !== updatePasswordDto.oldPassword)
       throw new Error(USER_ERROR_MESSAGE.OLD_PASSWORD_INCORRECT);
 
-    user.password = updatePasswordDto.newPassword;
-    user.version += 1;
-    user.updatedAt = Date.now();
-    this.items.set(id, user);
+    try {
+      const updatedUser = await this.prisma.user.update({
+        where: { id },
+        data: {
+          version: { increment: 1 },
+          password: updatePasswordDto.newPassword,
+        },
+      });
 
-    return this.excludeUserPassword(user);
+      return this.excludeUserPassword(updatedUser);
+    } catch {
+      throw new Error(USER_ERROR_MESSAGE.NOT_FOUND);
+    }
   }
 
-  public deleteUser(id: string) {
-    const user = this.items.get(id);
+  public async deleteUser(id: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+    });
 
     if (!user) throw new Error(USER_ERROR_MESSAGE.NOT_FOUND);
 
-    this.items.delete(id);
+    await this.prisma.user.delete({
+      where: { id },
+    });
   }
 
-  public excludeUserPassword(user: User) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, ...restData } = user;
-
-    return restData;
+  private excludeUserPassword(user: UsersResponseDto): UsersResponseDto {
+    return plainToInstance(UsersResponseDto, user, {
+      excludeExtraneousValues: true,
+    });
   }
 }

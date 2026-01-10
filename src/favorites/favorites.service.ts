@@ -1,8 +1,10 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { AlbumsService } from 'src/albums/albums.service';
-import { ArtistsService } from 'src/artists/artists.service';
-import { ERROR_MESSAGE } from 'src/constants';
-import { TracksService } from 'src/tracks/tracks.service';
+import { Prisma } from '@prisma/client';
+import { PrismaService } from '../shared/prisma.service';
+import { AlbumsService } from '../albums/albums.service';
+import { ArtistsService } from '../artists/artists.service';
+import { TracksService } from '../tracks/tracks.service';
+import { ERROR_MESSAGE, PRISMA_ERROR } from '../constants';
 import { Favorites } from './entities/favorite.entity';
 
 interface RemoveFavoriteOptions {
@@ -19,6 +21,7 @@ export class FavoritesService {
   };
 
   constructor(
+    private prisma: PrismaService,
     @Inject(forwardRef(() => ArtistsService))
     private readonly artistsService: ArtistsService,
 
@@ -29,56 +32,106 @@ export class FavoritesService {
     private readonly tracksService: TracksService,
   ) {}
 
-  public getAll() {
-    const artists = Array.from(this.favorites.artists)
-      .map((id: string) => this.artistsService.getArtistsMap().get(id))
-      .filter(Boolean);
+  public async getAll() {
+    const [artists, albums, tracks] = await Promise.all([
+      this.prisma.artistFavorite.findMany({
+        include: { artist: true },
+      }),
+      this.prisma.albumFavorite.findMany({
+        include: { album: true },
+      }),
+      this.prisma.trackFavorite.findMany({
+        include: { track: true },
+      }),
+    ]);
 
-    const albums = Array.from(this.favorites.albums)
-      .map((id: string) => this.albumsService.getAlbumsMap().get(id))
-      .filter(Boolean);
-
-    const tracks = Array.from(this.favorites.tracks)
-      .map((id: string) => this.tracksService.getTracksMap().get(id))
-      .filter(Boolean);
-
-    return { artists, albums, tracks };
+    return {
+      artists: artists.map((data) => data.artist),
+      albums: albums.map((data) => data.album),
+      tracks: tracks.map((data) => data.track),
+    };
   }
 
-  public addTrack(id: string) {
-    if (!this.tracksService.getById(id)) {
+  public async addTrack(id: string) {
+    const track = await this.tracksService.getById(id);
+
+    if (!track) {
       throw new Error(ERROR_MESSAGE.NOT_FOUND);
     }
 
-    this.favorites.tracks.add(id);
+    try {
+      await this.prisma.trackFavorite.create({
+        data: { trackId: id },
+      });
+    } catch (error) {
+      if (error.code !== PRISMA_ERROR.CONSTRAINT_ERROR) {
+        throw error;
+      }
+    }
   }
 
-  public addArtist(id: string) {
-    if (!this.artistsService.getById(id)) {
+  public async addArtist(id: string) {
+    const artist = await this.artistsService.getById(id);
+
+    if (!artist) {
       throw new Error(ERROR_MESSAGE.NOT_FOUND);
     }
 
-    this.favorites.artists.add(id);
+    try {
+      await this.prisma.artistFavorite.create({
+        data: { artistId: id },
+      });
+    } catch (error) {
+      if (error.code !== PRISMA_ERROR.CONSTRAINT_ERROR) {
+        throw error;
+      }
+    }
   }
 
-  public addAlbum(id: string) {
-    if (!this.albumsService.getById(id)) {
+  public async addAlbum(id: string) {
+    const album = await this.albumsService.getById(id);
+
+    if (!album) {
       throw new Error(ERROR_MESSAGE.NOT_FOUND);
     }
 
-    this.favorites.albums.add(id);
+    try {
+      await this.prisma.albumFavorite.create({
+        data: { albumId: id },
+      });
+    } catch (error) {
+      if (error.code !== PRISMA_ERROR.CONSTRAINT_ERROR) {
+        throw error;
+      }
+    }
   }
 
-  public removeFavoriteItem({ id, category }: RemoveFavoriteOptions) {
-    switch (category) {
-      case 'albums':
-        return this.favorites.albums.delete(id);
+  public async removeFavoriteItem({ id, category }: RemoveFavoriteOptions) {
+    try {
+      switch (category) {
+        case 'albums':
+          return await this.prisma.albumFavorite.delete({
+            where: { albumId: id },
+          });
 
-      case 'tracks':
-        return this.favorites.tracks.delete(id);
+        case 'tracks':
+          return await this.prisma.trackFavorite.delete({
+            where: { trackId: id },
+          });
 
-      case 'artists':
-        return this.favorites.artists.delete(id);
+        case 'artists':
+          return await this.prisma.artistFavorite.delete({
+            where: { artistId: id },
+          });
+      }
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === PRISMA_ERROR.QUERY_ERROR) {
+          return null;
+        }
+
+        throw error;
+      }
     }
   }
 }
